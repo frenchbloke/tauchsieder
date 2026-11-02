@@ -319,11 +319,27 @@ $("drop").ondragleave=()=>$("drop").classList.remove("on");
 $("drop").ondrop=e=>{e.preventDefault();$("drop").classList.remove("on");const f=e.dataTransfer.files[0];if(f)f.arrayBuffer().then(b=>load(b,f.name))};
 $("play").onclick=play;$("stop").onclick=stop;
 $("loop").onchange=()=>{if(src)src.loop=$("loop").checked};
-$("roll").onclick=()=>{seed=(Math.random()*4294967296)>>>0;const wasP=playing;newParams();if(wasP)play()};
+$("roll").onclick=()=>{seed=(Math.random()*4294967296)>>>0;const wasP=playing;newParams();if(wasP)play();randomizeColors()};
 $("exp").onclick=exportWav;
 $("seqOn").onchange=()=>{if(playing)seqStart();else seqStop()};
 ["xOn","xType","xDrive","xTone","xAmt"].forEach(i=>["input","change"].forEach(ev=>$(i).addEventListener(ev,()=>{if(P){pullDist();if(chain)chain.update(P)}})));
 draw();
+function randomizeColors(){
+  function getRandomColor(){
+    const hue=Math.random()*360;
+    return `hsl(${hue},70%,60%)`
+  }
+  function getContrastingColor(hslColor){
+    const c=hslColor.match(/\d+/g);
+    const brightness=(parseInt(c[0])*299+parseInt(c[1])*587+parseInt(c[2])*114)/1000;
+    return brightness>125?'#000':'#fff'
+  }
+  document.body.style.backgroundColor=getRandomColor();
+  document.querySelectorAll('.left-panel,.right-panel').forEach(panel=>{panel.style.backgroundColor=getRandomColor()});
+  document.querySelectorAll('.btns button').forEach(btn=>{btn.style.backgroundColor=getRandomColor()});
+  const logo=document.querySelector('.logo');
+  if(logo)logo.style.color=getContrastingColor(document.body.style.backgroundColor)
+}
 </script>
 </body>
 </html>
